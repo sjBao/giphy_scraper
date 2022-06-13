@@ -54,5 +54,6 @@ defmodule GiphyScraper do
     |> Enum.map(fn %{"id" => id, "title" => title, "url" => url, "username" => username} ->
       %GiphyImage{id: id, title: title, url: url, username: username}
     end)
+    |> Enum.slice(0..24)
   end
 end
