@@ -3,7 +3,7 @@ defmodule GiphyScraper do
   Documentation for `GiphyScraper`.
   """
   @giphy_url "api.giphy.com/v1/gifs/search"
-  @api_key IO.gets("Please input Giphy API: ") |> String.trim()
+  @api_key String.trim(IO.gets("Please input Giphy API: "))
 
   @doc """
   Giphy Scraper
@@ -29,10 +29,8 @@ defmodule GiphyScraper do
   """
   @spec search(query :: String.t()) :: list(GiphyImage.t())
   def search(query) do
-    with {:ok, %{status_code: 200, body: body}} <-
-           query_giphy_api(String.replace(query, ~r/[[:space:]]+/, "-")) do
-      parse_giphy_api_success_response_body(body)
-    else
+    case query_giphy_api(String.replace(query, ~r/[[:space:]]+/, "-")) do
+      {:ok, %{status_code: 200, body: body}} -> parse_giphy_api_success_response_body(body)
       {:error, error_response} -> handle_giphy_api_response_error(error_response)
       {:ok, %{status_code: 400}} -> {:error, "No image found for query: '#{query}'"}
     end
@@ -43,7 +41,7 @@ defmodule GiphyScraper do
   end
 
   defp handle_giphy_api_response_error(error) do
-    IO.inspect(error)
+    error
   end
 
   defp parse_giphy_api_success_response_body(body) do
